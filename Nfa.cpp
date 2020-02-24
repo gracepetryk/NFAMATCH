@@ -6,8 +6,6 @@
 #include <sstream>
 #include <iostream>
 #include "Nfa.h"
-#include "NfaNode.h"
-#include "NfaTransition.h"
 
 using namespace std;
 
@@ -36,56 +34,50 @@ Nfa::Nfa(istream& definitionStream){
         char acceptingChar;
         lineStream >> acceptingChar;
 
-        bool isAccepting;
-        isAccepting = acceptingChar == '+';
 
         int fromNodeNum;
         int toNodeNum;
         lineStream >> fromNodeNum >> toNodeNum;
 
 
-        NfaNode* fromNode = addNode(fromNodeNum);
-        NfaNode* toNode = addNode(toNodeNum);
-
-        if (!root) {
-            root = fromNode;
+        if (acceptingChar == '+') {
+            acceptingStates.insert(fromNodeNum);
         }
-
-        fromNode->isAccepting = isAccepting;
 
         char transitionChar;
         if (lineStream >> transitionChar) {
-            // create or get origin and destination nodes
-
-            // create transition
-            auto* transition = new NfaTransition;
-
-            transition->c = transitionChar;
-            transition->isLambda = transitionChar == lambdaChar;
-            transition->target = toNode;
-            transition->origin = fromNode;
-
-            // add transition to fromNode
-            fromNode->transitions.insert(transition);
+            states[fromNodeNum].insert({transitionChar, toNodeNum});
         }
     }
 }
 
-NfaNode* Nfa::addNode(int num) {
-    /**
-     * adds a node if node does not already exist, returns the new node
-     *
-     * @returns pointer to the newly added node, or the existing one if it already exists
-     */
-    if (nodes.count(num) == 0) {
-        // create new node
-        NfaNode node;
+void Nfa::followLambdaSetInner(int start, unordered_set<int>& lambdaSet) {
 
-        node.num = num;
-        node.transitions = {};
+    if (states[start].count(lambdaChar) > 0) {
+        auto range = states[start].equal_range(lambdaChar);
+        for (auto it = range.first; it != range.second; it++) {
+            if (lambdaSet.count(it->second) == 0) {
+                lambdaSet.insert(it->second);
+                followLambdaSetInner(it->second, lambdaSet);
+            }
 
-        nodes.insert(pair<int, NfaNode>(num, node));
+        }
     }
 
-    return &nodes.at(num);
 }
+
+unordered_set<int> Nfa::followLambdaSet(int start) {
+    unordered_set<int> lambdaSet;
+    followLambdaSetInner(start, lambdaSet);
+    return lambdaSet;
+}
+
+const set<char> &Nfa::getAlphabet() const {
+    return alphabet;
+}
+
+char Nfa::getLambdaChar() const {
+    return lambdaChar;
+}
+
+
