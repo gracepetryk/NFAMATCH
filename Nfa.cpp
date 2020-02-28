@@ -24,7 +24,6 @@ Nfa::Nfa(istream& definitionStream){
     while (headerStream >> token) {
         alphabet.push_back(token);
     }
-    cout << "done!";
 
     string line;
     istringstream lineStream;
