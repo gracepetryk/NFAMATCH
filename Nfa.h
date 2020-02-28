@@ -8,8 +8,8 @@
 
 #include <string>
 #include <set>
-#include <unordered_map>
-#include <unordered_set>
+#include <map>
+#include <set>
 #include <vector>
 
 
@@ -17,23 +17,24 @@ class Nfa {
 public:
     explicit Nfa(std::istream& definitionStream);
 
-    const std::set<char> &getAlphabet() const;
+    std::set<int> followLambda(std::set<int> followStates);
+    std::set<int> followChar(std::set<int> followStates, char c);
 
 
-    std::unordered_set<int> followLambdaSet(int start);
+    const std::vector<char> &getAlphabet() const;
+    char getLambdaChar() const;
+
+    const std::multimap<char, int> &getState(int state) const;
+    const std::set<int> &getAcceptingStates() const;
 
 private:
     unsigned int numNodes{};
     char lambdaChar{};
-public:
-    char getLambdaChar() const;
 
-private:
-    std::set<char> alphabet;
-    std::unordered_map<int, std::unordered_multimap<char, int>> states;
-    std::unordered_set<int> acceptingStates;
+    std::vector<char> alphabet;
+    std::map<int, std::multimap<char, int>> states;
+    std::set<int> acceptingStates;
 
-    void followLambdaSetInner(int start, std::unordered_set<int>& lambdaSet);
 };
 
 

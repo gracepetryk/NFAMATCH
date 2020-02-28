@@ -16,6 +16,8 @@ public:
 private:
     std::map<int, std::map<char, int>> transitionTable;
     std::set<int> acceptingStates;
+
+
 };
 
 

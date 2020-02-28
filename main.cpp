@@ -11,8 +11,7 @@ int main(int argc, char *argv[]) {
     ifstream fileStream (argv[1]);
 
     Nfa nfa(fileStream);
-
-    //Dfa dfa(nfa);
+    Dfa dfa(nfa);
 
     return 0;
 }
