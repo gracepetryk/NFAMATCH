@@ -4,7 +4,6 @@
 
 #include <istream>
 #include <sstream>
-#include <iostream>
 #include <stack>
 #include "Nfa.h"
 
@@ -45,10 +44,10 @@ Nfa::Nfa(istream& definitionStream){
         }
 
         char transitionChar;
-        if (lineStream >> transitionChar) {
+        states[fromNodeNum].insert({});
+        states[toNodeNum].insert({});
+        while (lineStream >> transitionChar) {
             states[fromNodeNum].insert({transitionChar, toNodeNum});
-        } else {
-            states[fromNodeNum].insert({});
         }
     }
 }
