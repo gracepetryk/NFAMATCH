@@ -262,6 +262,11 @@ void Dfa::pruneDeadStates() {
             reversedState.transitions.insert({transition.first, state.second.keyInDFA});
         }
         if (state.second.isAccepting) {
+            if (reversedTable.count(state.second.keyInDFA) == 0) {
+                DFAState newState;
+                newState.keyInDFA = state.second.keyInDFA;
+                reversedTable.insert({state.second.keyInDFA, newState});
+            }
             statesToVisit.push(reversedTable.at(state.second.keyInDFA));
             validStates.insert(state.second.keyInDFA);
         }

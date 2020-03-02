@@ -10,13 +10,22 @@ int main(int argc, char *argv[]) {
     ifstream iFileStream (argv[1]);
     ofstream oFileStream (argv[2]);
 
+    if (!iFileStream.good()) {
+        return 1;
+    }
+
+    if (iFileStream.peek() == std::ifstream::traits_type::eof()) {
+        return 1; // empty file
+    }
 
     Nfa nfa(iFileStream);
+    iFileStream.close();
     Dfa dfa(nfa);
     dfa.printTable(oFileStream);
+    oFileStream.close();
     cout << "\n";
 
-    for (size_t i = 3; i < argc; i++) {
+    for (int i = 3; i < argc; i++) {
         cout << "OUTPUT ";
         string matchString = argv[i];
         if (matchString.size() > 2 && matchString[0] == '\'') {
